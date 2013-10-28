@@ -1,0 +1,39 @@
+<?php
+function rss_feeds_uninstall()
+{
+	cache_clear_all('rss_feeds', 'cache', TRUE);
+	drupal_uninstall_schema('rssfeeds');
+	drupal_uninstall_schema('rsstags');
+	menu_rebuild();
+}
+
+function rss_feeds_schema()
+{
+	$schema['rssfeeds'] = array(
+		'fields'      => array(
+			'id'        => array('type' => 'serial', 'not null' => TRUE),
+			'name'       => array('type' => 'varchar', 'length' => 255, 'not null' => TRUE),
+			'url'        => array('type' => 'varchar', 'length' => 255, 'not null' => TRUE),
+			'created_at' => array('type' => 'int', 'not null' => TRUE),
+			'updated_at' => array('type' => 'int', 'not null' => TRUE),
+		),
+		'primary key' => array('id'),
+	);
+
+	$schema['rsstags'] = array(
+		'fields'       => array(
+			'id'   => array('type' => 'serial', 'not null' => TRUE),
+			'name' => array('type' => 'varchar', 'length' => 255, 'not null' => TRUE),
+			'id_rss'  => array('type' => 'int', 'not null' => TRUE),
+		),
+		'foreign keys' => array(
+			'rssfeeds' => array(
+				'table'   => 'rssfeeds',
+				'columns' => array('id' => 'id_rss'),
+			),
+		),
+		'primary key'  => array('id'),
+	);
+
+	return $schema;
+}

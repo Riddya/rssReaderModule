@@ -1,0 +1,7 @@
+name = RSS Feeds
+description = Makes a compact page to navigate on RSS feeds.
+package = "RSS"
+core = 7.x
+version = "7.x-1.0"
+configure = admin/config/content/rss_feeds
+files[]= rss_feeds.module
