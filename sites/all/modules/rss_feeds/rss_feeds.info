@@ -6,5 +6,4 @@ version = "7.x-1.0"
 configure = admin/config/content/rss_feeds
 files[]= rss_feeds.module
 stylesheets[all][] = main.css
-scripts[] = jquery.js
 scripts[] = main.js
