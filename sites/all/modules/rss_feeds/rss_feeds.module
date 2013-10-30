@@ -75,6 +75,16 @@ function rss_feeds_menu()
 	return $items;
 }
 
+function rss_load($id)
+{
+	$rss = db_select('rssfeeds', 'n')
+		->fields('n', array('id', 'name', 'url', 'created_at', 'updated_at'))
+		->condition('n.id', $id)
+		->execute()->fetchAssoc();
+
+	return $rss;
+}
+
 function rss_feeds_form($form, &$form_state, $rss = null)
 {
 	$form['name'] = array(
@@ -178,6 +188,7 @@ function rss_list()
 	));
 }
 
+
 function rss_feeds_delete($rss)
 {
 	$rss_deleted = db_delete('rssfeeds')
@@ -188,26 +199,26 @@ function rss_feeds_delete($rss)
 }
 
 
-function rss_load($id) // ??????????????????
+
+/**
+ * @param $display
+ *
+ * @return DatabaseStatementInterface|null
+ *
+ * return rss feeds list
+ */
+function rss_contents($display)
 {
-	$rss = db_select('rssfeeds', 'n')
-		->fields('n', array('id', 'name', 'url', 'created_at', 'updated_at'))
-		->condition('n.id', $id)
-		->execute()->fetchAssoc();
+	$query = db_select('rssfeeds', 'n')
+		->fields('n', array('id', 'name', 'url'))
+		->orderBy('name', 'DESC');
 
-	return $rss;
-}
-
-
-/*function myErrorHandler($errno, $errstr, $errfile, $errline)
-{
-	// error was suppressed with the @-operator
-	if (0 === error_reporting()) {
-		return false;
+	if ($display == 'block') {
+		$query->range(0, 5);
 	}
 
-	throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-}*/
+	return $query->execute();
+}
 
 
 /**
@@ -263,26 +274,6 @@ function rss_content($rss)
 	}
 }
 
-
-/**
- * @param $display
- *
- * @return DatabaseStatementInterface|null
- *
- * return rss feeds list
- */
-function rss_contents($display)
-{
-	$query = db_select('rssfeeds', 'n')
-		->fields('n', array('id', 'name', 'url'))
-		->orderBy('name', 'DESC');
-
-	if ($display == 'block') {
-		$query->range(0, 5);
-	}
-
-	return $query->execute();
-}
 
 
 function rss_feeds_block_view($delta = '')
