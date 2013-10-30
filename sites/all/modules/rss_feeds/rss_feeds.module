@@ -113,16 +113,16 @@ function rss_feeds_form_validate($form, &$form_state)
 	$url = $form_state['values']['url'];
 
 	if (fopen($url, "r")) {
-		try {
-			$rss_feed = simplexml_load_file($url);
-		} catch (ErrorException $e) {
+		libxml_use_internal_errors(true);
+		$rss_feed = simplexml_load_file($url);
+		if (!empty($rss_feed)) {
+			drupal_set_title($rss_feed->channel->title);
+			$page_array = theme('rssfeeds_content', array('items' => $rss_feed));
+
+			return $page_array;
+		} else {
 			form_set_error('url', t('URL is invalid!'));
 		}
-		drupal_set_title($rss_feed->channel->title);
-		$page_array = theme('rssfeeds_content', array('items' => $rss_feed));
-
-		return $page_array;
-
 	} else {
 		form_set_error('url', t('URL is invalid!'));
 	}
@@ -204,7 +204,7 @@ function rss_load($id) // ??????????????????
 }
 
 
-function myErrorHandler($errno, $errstr, $errfile, $errline)
+/*function myErrorHandler($errno, $errstr, $errfile, $errline)
 {
 	// error was suppressed with the @-operator
 	if (0 === error_reporting()) {
@@ -212,7 +212,7 @@ function myErrorHandler($errno, $errstr, $errfile, $errline)
 	}
 
 	throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-}
+}*/
 
 
 /**
@@ -258,9 +258,14 @@ function rss_content($rss)
 {
 	$url = $rss['url'];
 	if (fopen($url, "r")) {
-		try {
-			$rss_feed = simplexml_load_file($url);
-		} catch (ErrorException $e) {
+		libxml_use_internal_errors(true);
+		$rss_feed = simplexml_load_file($url);
+		if (!empty($rss_feed)) {
+			drupal_set_title($rss_feed->channel->title);
+			$page_array = theme('rssfeeds_content', array('items' => $rss_feed));
+
+			return $page_array;
+		} else {
 			$page_array['rss_feeds_arguments'] = array(
 				'#title'  => t('All posts from the last week'),
 				'#markup' => t('No posts available.'),
@@ -268,10 +273,6 @@ function rss_content($rss)
 
 			return $page_array;
 		}
-		drupal_set_title($rss_feed->channel->title);
-		$page_array = theme('rssfeeds_content', array('items' => $rss_feed));
-
-		return $page_array;
 	} else {
 		$page_array['rss_feeds_arguments'] = array(
 			'#title'  => t('All posts from the last week'),
@@ -306,6 +307,7 @@ function rss_contents($display)
 
 function rss_feeds_block_view($delta = '')
 {
+	$blocks = array();
 	switch ($delta) {
 		case 'rss_feeds':
 			$select = db_select('rssfeeds', 'tc');
@@ -314,10 +316,10 @@ function rss_feeds_block_view($delta = '')
 
 			$entries = $select->execute()->fetchAll();
 
-			$blocks = array();
 			$blocks['subject'] = t('List of URLs');
 			$blocks['content'] = theme('rssfeeds_block', array('urls' => $entries));
 	}
+
 	return $blocks;
 }
 

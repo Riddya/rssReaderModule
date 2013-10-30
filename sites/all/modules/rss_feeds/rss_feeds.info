@@ -1,5 +1,5 @@
 name = RSS Feeds
-description = Makes a compact page to navigate on RSS feeds.
+description = Makes a compact page to navigate on RSS feeds (need jQuery 1.8 or higher).
 package = "RSS"
 core = 7.x
 version = "7.x-1.0"

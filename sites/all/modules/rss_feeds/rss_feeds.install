@@ -11,7 +11,7 @@ function rss_feeds_schema()
 {
 	$schema['rssfeeds'] = array(
 		'fields'      => array(
-			'id'        => array('type' => 'serial', 'not null' => TRUE),
+			'id'         => array('type' => 'serial', 'not null' => TRUE),
 			'name'       => array('type' => 'varchar', 'length' => 255, 'not null' => TRUE),
 			'url'        => array('type' => 'varchar', 'length' => 255, 'not null' => TRUE),
 			'created_at' => array('type' => 'int', 'not null' => TRUE),
@@ -22,9 +22,9 @@ function rss_feeds_schema()
 
 	$schema['rsstags'] = array(
 		'fields'       => array(
-			'id'   => array('type' => 'serial', 'not null' => TRUE),
-			'name' => array('type' => 'varchar', 'length' => 255, 'not null' => TRUE),
-			'id_rss'  => array('type' => 'int', 'not null' => TRUE),
+			'id'     => array('type' => 'serial', 'not null' => TRUE),
+			'name'   => array('type' => 'varchar', 'length' => 255, 'not null' => TRUE),
+			'id_rss' => array('type' => 'int', 'not null' => TRUE),
 		),
 		'foreign keys' => array(
 			'rssfeeds' => array(
