@@ -115,12 +115,7 @@ function rss_feeds_form_validate($form, &$form_state)
 	if (fopen($url, "r")) {
 		libxml_use_internal_errors(true);
 		$rss_feed = simplexml_load_file($url);
-		if (!empty($rss_feed)) {
-			drupal_set_title($rss_feed->channel->title);
-			$page_array = theme('rssfeeds_content', array('items' => $rss_feed));
-
-			return $page_array;
-		} else {
+		if (empty($rss_feed)) {
 			form_set_error('url', t('URL is invalid!'));
 		}
 	} else {
@@ -222,17 +217,10 @@ function rss_load($id) // ??????????????????
 function _rss_feeds_page()
 {
 	drupal_set_title(t('RSS Feeds'));
-	$entries = db_select('rssfeeds', 'n')
-		->fields('n', array('id', 'name', 'url'))->execute()->fetchAll();
 
-	$result = rss_contents('page');
-	$items = array();
-	foreach ($result as $node) {
-		$items[] = array(
-			'data' => l($node->name, $node->url),
-		);
-	}
-	if (empty($items)) {
+	$result = rss_contents('page')->fetchAll();
+
+	if (!$result) {
 		$page_array['rss_feeds_arguments'] = array(
 			'#title'  => t('RSS Feeds page'),
 			'#markup' => t('No RSS feeds available'),
@@ -240,7 +228,7 @@ function _rss_feeds_page()
 
 		return $page_array;
 	} else {
-		$page_array = theme('rssfeeds_page', array('urls' => $entries));
+		$page_array = theme('rssfeeds_page', array('urls' => $result));
 
 		return $page_array;
 	}
@@ -257,22 +245,14 @@ function _rss_feeds_page()
 function rss_content($rss)
 {
 	$url = $rss['url'];
-	if (fopen($url, "r")) {
-		libxml_use_internal_errors(true);
-		$rss_feed = simplexml_load_file($url);
-		if (!empty($rss_feed)) {
-			drupal_set_title($rss_feed->channel->title);
-			$page_array = theme('rssfeeds_content', array('items' => $rss_feed));
 
-			return $page_array;
-		} else {
-			$page_array['rss_feeds_arguments'] = array(
-				'#title'  => t('All posts from the last week'),
-				'#markup' => t('No posts available.'),
-			);
+	libxml_use_internal_errors(true);
+	$rss_feed = simplexml_load_file($url);
+	if (!empty($rss_feed)) {
+		drupal_set_title($rss_feed->channel->title);
+		$page_array = theme('rssfeeds_content', array('items' => $rss_feed));
 
-			return $page_array;
-		}
+		return $page_array;
 	} else {
 		$page_array['rss_feeds_arguments'] = array(
 			'#title'  => t('All posts from the last week'),
