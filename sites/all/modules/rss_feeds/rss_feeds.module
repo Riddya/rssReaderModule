@@ -153,7 +153,7 @@ function rss_feeds_form_submit($form, &$form_state)
 		drupal_set_message(t('RSS Feed added!'));
 	}
 
-	drupal_goto('admin/config/content/rss_feeds');
+	$form_state['redirect'] = array('admin/config/content/rss_feeds');
 }
 
 function rss_list()
