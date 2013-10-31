@@ -1,7 +1,7 @@
 <div id="rssfeeds-pager">
 	<?php foreach ($urls as $url): ?>
 		<span>
-            <a target="_blank" href="rss_feeds/<?php echo $url->id; ?>/items"><?php echo $url->name; ?></a><br>
+			<?php echo l($url->name, "rss_feeds/{$url->id}/items", array('attributes' => array('target' => '_blank'))); ?><br>
         </span>
 	<?php endforeach; ?>
 </div><br><br>
